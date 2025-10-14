@@ -1,0 +1,32 @@
+
+.home-body {
+    display: flex;
+    gap: 50px;
+    padding-top: 8px;
+}
+
+.home-header {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    height: 122px;
+    border-bottom: 1px dotted rgba(128, 128, 128, 0.669);
+}
+
+.home-header h1 {
+  font-family: 'Barracuda', sans-serif;
+  font-weight: 600;
+  font-size: large;
+
+}
+
+.aadhaar-logo {
+    width: 65px;
+    height: 40px;
+}
+
+.home-content{
+    display: flex;
+    flex-wrap: wrap;
+}

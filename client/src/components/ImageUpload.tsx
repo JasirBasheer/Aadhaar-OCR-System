@@ -5,7 +5,6 @@ import { useAadhaar } from "@/context/AadhaarContext";
 import uploadAadhaarImages from "../services/uploadAadhaar.ts";
 import { useMutation } from "@tanstack/react-query";
 
-
 export const ImageUpload = () => {
   const frontImageRef = useRef<HTMLInputElement>(null);
   const backImageRef = useRef<HTMLInputElement>(null);
@@ -19,15 +18,15 @@ export const ImageUpload = () => {
   const { setDetails } = useAadhaar();
 
   const uploadAadhaarImagesMutation = useMutation({
-  mutationFn: uploadAadhaarImages,
-  onSuccess: (data) => {
-    console.log("Upload successful!", data);
-    setDetails(data); 
-  },
-  onError: (err) => {
-    console.error("Upload failed:", err);
-  },
-});
+    mutationFn: uploadAadhaarImages,
+    onSuccess: (data) => {
+      console.log("Upload successful!", data);
+      setDetails(data); 
+    },
+    onError: (err) => {
+      console.error("Upload failed:", err);
+    },
+  });
 
   const handleUpload = () => {
     if (!frontFile || !backFile) {
@@ -63,7 +62,20 @@ export const ImageUpload = () => {
           />
         </div>
       </div>
-        <div className="parse-button" onClick={handleUpload}>Parse aadhaar</div>
+      <div
+        className={`parse-button ${uploadAadhaarImagesMutation.status === "pending" ? "loading" : ""}`}
+        onClick={uploadAadhaarImagesMutation.status === "pending" ? undefined : handleUpload}
+        style={uploadAadhaarImagesMutation.status === "pending" ? { pointerEvents: "none", opacity: 0.6 } : {}}
+      >
+        {uploadAadhaarImagesMutation.status === "pending" ? (
+          <div className="loading-spinner" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span className="tw-animate-spin" style={{ marginRight: "8px", fontSize: "1.5em" }}>⏳</span>
+            Parsing...
+          </div>
+        ) : (
+          "Parse aadhaar"
+        )}
+      </div>
     </div>
   );
 };

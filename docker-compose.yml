@@ -29,13 +29,8 @@ services:
       target: production
     ports:
       - "5005:5005"
-    environment:
-      - NODE_ENV=production
-      - PORT=5005
-      - CLIENT_ORIGIN=http://localhost:3005
-      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
-      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+    env_file:
+      - ./server/.env
     restart: unless-stopped
     networks:
       - aadhaar-network

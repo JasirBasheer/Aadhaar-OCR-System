@@ -1,9 +1,9 @@
 services:
-  frontend:
+  client:
     build: 
-     context: ./frontend
+     context: ./client
      dockerfile: Dockerfile
-    env_file: ./frontend/.env
+    env_file: ./client/.env.local
     volumes:
       - /app/node_modules
       - frontend_builds:/usr/share/nginx/html

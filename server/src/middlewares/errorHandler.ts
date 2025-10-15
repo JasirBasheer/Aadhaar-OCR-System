@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import multer from "multer";
 
 export const errorHandler = (
-  err: Error,
+  err: Error | multer.MulterError | BaseError,
   _req: Request,
   res: Response,
 ): void => {
@@ -13,7 +13,7 @@ export const errorHandler = (
   }
 
   if (err instanceof multer.MulterError) {
-    if (err.code === "LIMIT_FILE_SIZE") {
+    if (err?.code === "LIMIT_FILE_SIZE") {
       res
         .status(HttpResCode.BAD_REQUEST)
         .json({ message: HttpResMsg.IMAGE_SIZE_TOOLARGE });

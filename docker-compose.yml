@@ -1,26 +1,16 @@
 services:
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-      target: production
-    ports:
-      - "3005:3005"
-    environment:
-      - NODE_ENV=production
-    restart: unless-stopped
-    depends_on:
-      - server
+  frontend:
+    build: 
+     context: ./frontend
+     dockerfile: Dockerfile
+    env_file: ./frontend/.env
+    volumes:
+      - /app/node_modules
+      - frontend_builds:/usr/share/nginx/html
     networks:
-      - multi_net
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3005"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    labels:
-      project: "OCRSystem"
+      multi_net:   
+        aliases:
+          - OCRSystem
 
   server:
     build:
@@ -50,3 +40,7 @@ networks:
     external: true
     labels:
       project: "OCRSystem"
+
+volumes:
+  frontend_builds:
+    external: true

@@ -69,7 +69,6 @@ export const ImageUpload = () => {
       >
         {uploadAadhaarImagesMutation.status === "pending" ? (
           <div className="loading-spinner" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span className="tw-animate-spin" style={{ marginRight: "8px", fontSize: "1.5em" }}>⏳</span>
             Parsing...
           </div>
         ) : (

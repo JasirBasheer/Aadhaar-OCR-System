@@ -6,7 +6,7 @@ services:
     env_file: ./client/.env.local
     volumes:
       - /app/node_modules
-      - frontend_builds:/usr/share/nginx/html/aadhaar
+      - frontend_builds:/usr/share/nginx/html/aadhaar-ocr
     networks:
       multi_net:   
         aliases:
@@ -25,7 +25,7 @@ services:
     networks:
       multi_net:   
         aliases:
-          - aadhaar 
+          - aadhaar-ocr 
     labels:
       project: "OCRSystem"
 

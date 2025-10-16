@@ -34,19 +34,20 @@ jobs:
             npm install
             npm run build
 
-            echo "🚚 Moving build to shared volume (frontend_builds)..."
+            echo "Moving build to shared volume (frontend_builds)..."
             mkdir -p /var/lib/docker/volumes/frontend_builds/_data/aadhaar-ocr
             cp -r dist/* /var/lib/docker/volumes/frontend_builds/_data/aadhaar-ocr/
 
-            echo "🧹 Cleaning containers, images, volumes, networks..."
-            docker ps -a --filter "label=project=OCRSystem" -q | xargs -r docker rm -f
-            docker images --filter "label=project=OCRSystem" -q | xargs -r docker rmi -f
-            docker volume ls --filter "label=project=OCRSystem" -q | xargs -r docker volume rm -f
-            docker network ls --filter "label=project=OCRSystem" -q | xargs -r docker network rm -f
+            echo "Cleaning containers, images, volumes, networks..."
+            sudo docker ps -a --filter "label=project=OCRSystem" -q | xargs -r sudo docker rm -f
+            sudo docker images --filter "label=project=OCRSystem" -q | xargs -r sudo docker rmi -f
+            sudo docker volume ls --filter "label=project=OCRSystem" -q | xargs -r sudo docker volume rm -f
+            sudo docker network ls --filter "label=project=OCRSystem" -q | xargs -r sudo docker network rm -f
 
-            echo "🔁 Rebuilding and restarting containers..."
+            echo "Rebuilding and restarting containers..."
             cd /opt/projects/Aadhaar-OCR-System
-            docker compose up --build -d
+            sudo docker compose up --build -d
 
-            echo "✅ Deployment completed!"
+            echo "Deployment completed!"
           EOF
+

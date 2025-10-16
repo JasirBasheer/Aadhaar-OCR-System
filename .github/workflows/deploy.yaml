@@ -13,16 +13,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up SSH key
+      - name: Start SSH agent and add key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
+
+      - name: Add VM to known hosts
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.VM_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.VM_INSTANCE_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy on VM
         run: |
-          ssh ${{ secrets.VM_SSH_USER }}@${{ secrets.VM_INSTANCE_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_SSH_USER }}@${{ secrets.VM_INSTANCE_IP }} << 'EOF'
             set -e
 
             echo "Pulling latest code..."
@@ -50,4 +53,3 @@ jobs:
 
             echo "Deployment completed!"
           EOF
-

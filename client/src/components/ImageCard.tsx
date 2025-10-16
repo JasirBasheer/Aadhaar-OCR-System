@@ -1,9 +1,9 @@
 import "../assets/styles/ImageCard.css"
-import React, { type RefObject } from "react";
+import React from "react";
 import { Upload, Image } from "lucide-react"
 
 interface ImageCardProps {
-  ImageRef: RefObject<HTMLInputElement | null>;
+  ImageRef: React.RefObject<HTMLInputElement>;
   ImagePreview: string;
   setImagePrev: React.Dispatch<React.SetStateAction<string>>;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;

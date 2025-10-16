@@ -10,25 +10,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up SSH key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.VM_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.VM_INSTANCE_IP }} >> ~/.ssh/known_hosts
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VM_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.VM_INSTANCE_IP }} >> ~/.ssh/known_hosts
 
-    - name: Deploy on VM
-      run: |
-        ssh ${{ secrets.VM_SSH_USER }}@${{ secrets.VM_INSTANCE_IP }} << 'EOF'
-          cd /opt/projects/Aadhaar-OCR-System
-          sudo git pull origin main
-          sudo docker container stop 
-          docker ps -a --filter "label=project=OCRSystem" -q | xargs -r docker rm -f
-          docker images --filter "label=project=OCRSystem" -q | xargs -r docker rmi -f
-          docker volume ls --filter "label=project=OCRSystem" -q | xargs -r docker volume rm -f
-          docker network ls --filter "label=project=OCRSystem" -q | xargs -r docker network rm -f
-          sudo docker compose up --build -d 
-        EOF
+      - name: Deploy on VM
+        run: |
+          ssh ${{ secrets.VM_SSH_USER }}@${{ secrets.VM_INSTANCE_IP }} << 'EOF'
+            set -e
+
+            echo "Pulling latest code..."
+            cd /opt/projects/Aadhaar-OCR-System
+            git pull origin main
+
+            echo "Installing dependencies and building client..."
+            cd client
+            npm install
+            npm run build
+
+            echo "🚚 Moving build to shared volume (frontend_builds)..."
+            mkdir -p /var/lib/docker/volumes/frontend_builds/_data/aadhaar-ocr
+            cp -r dist/* /var/lib/docker/volumes/frontend_builds/_data/aadhaar-ocr/
+
+            echo "🧹 Cleaning containers, images, volumes, networks..."
+            docker ps -a --filter "label=project=OCRSystem" -q | xargs -r docker rm -f
+            docker images --filter "label=project=OCRSystem" -q | xargs -r docker rmi -f
+            docker volume ls --filter "label=project=OCRSystem" -q | xargs -r docker volume rm -f
+            docker network ls --filter "label=project=OCRSystem" -q | xargs -r docker network rm -f
+
+            echo "🔁 Rebuilding and restarting containers..."
+            cd /opt/projects/Aadhaar-OCR-System
+            docker compose up --build -d
+
+            echo "✅ Deployment completed!"
+          EOF

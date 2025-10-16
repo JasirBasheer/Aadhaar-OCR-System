@@ -52,16 +52,19 @@ export const extractGender = (frontText: string): string | null => {
 
 
 export const extractAddress = (backText: string): string | null => {
-  const addressMatch = backText.match(
-    /address[:\-]?\s*([\s\S]+?)(Uttar Pradesh|[A-Z]{2,} - \d{6}|$)/i
-  );
-  return addressMatch?.[1].replace(/\n/g, " ").trim() || null;
+  const lines = backText.split(/\n|\r/).map(l => l.trim()).filter(Boolean);
+  const startIndex = lines.findIndex(line => /C\/O/i.test(line));
+  if (startIndex === -1) return null;
+
+  const addressLines = lines.slice(startIndex, startIndex + 5);
+  return addressLines.join(", ");
 };
+
 
 
 
 export const extractPincode = (backText: string): string | null => {
-  const pinMatches = backText.match(/\d{6}/g);
-  return pinMatches?.[pinMatches.length - 1] || null;
+  const normalizedText = backText.replace(/\s+/g, "");
+  const pinMatch = normalizedText.match(/\d{6}/);
+  return pinMatch?.[0] || null;
 };
-
